@@ -23,5 +23,15 @@ async def on_member_remove(member):
     embed = discord.Embed(title="👋 {} just left the server.".format(member.name), description="Goodbye! {} hope to see you again".format(member.name), color=0x00ff00)
     embed.set_thumbnail(url=member.avatar_url)
     await bot.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
+    
+@bot.command(name='eval', pass_context=True)
+@commands.check(user_is_me)
+async def _eval(ctx, *, command):
+    res = eval(command)
+    if inspect.isawaitable(res):
+        await bot.say(await res)
+    else:
+    	await bot.delete_message(ctx.message)
+    	await bot.say(res)
         
 bot.run(os.environ['BOT_TOKEN'])
