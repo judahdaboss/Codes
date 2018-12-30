@@ -24,6 +24,9 @@ async def on_member_remove(member):
     embed.set_thumbnail(url=member.avatar_url)
     await bot.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
     
+def user_is_me(ctx):
+	return ctx.message.author.id == "277983178914922497"
+    
 @bot.command(name='eval', pass_context=True)
 @commands.check(user_is_me)
 async def _eval(ctx, *, command):
