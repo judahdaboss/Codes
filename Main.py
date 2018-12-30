@@ -15,14 +15,14 @@ async def on_ready():
 async def on_member_join(member):
     server = member.server
     embed = discord.Embed(title="👋 {} just joined {} server!".format(member.name, server.name), description="Welcome to {} {}! Enjoy your stay here!".format(server.name, member.name), color=0x00ff00)
-    embed.set_thumbnail(url=https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(member))
+    embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(member))
     await bot.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
 
 @bot.event
 async def on_member_remove(member):
     server = member.server
     embed = discord.Embed(title="👋 {} just left the server.".format(member.name), description="Goodbye! {} hope to see you again".format(member.name), color=0x00ff00)
-    embed.set_thumbnail(url=https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(member))
+    embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.png?size=1024".format(member))
     await bot.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
     
 def user_is_me(ctx):
