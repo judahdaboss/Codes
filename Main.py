@@ -11,8 +11,6 @@ async def on_member_join(member):
     embed.set_thumbnail(url=member.avatar_url)
     try:
         await bot.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
-    except discord.errors.InvalidArgument:
-        await bot.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
 
 @bot.event
 async def on_member_remove(member):
@@ -21,7 +19,5 @@ async def on_member_remove(member):
     embed.set_thumbnail(url=member.avatar_url)
     try:
         await bot.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
-    except discord.errors.InvalidArgument:
-        await bot.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
         
 bot.run(os.environ['BOT_TOKEN'])
