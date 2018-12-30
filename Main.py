@@ -32,6 +32,12 @@ async def on_member_remove(member):
     except discord.errors.InvalidArgument:
         await bot.create_channel(server, "joins-and-leaves", type=discord.ChannelType.text)
         await bot.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
+	
+@bot.event
+async def on_message(message):
+	if message.content.upper().startswith('!P8BALL'):
+		ball8 = ([':8ball: It is certain',':8ball: As i see it, yes', ':8ball: Dont count on it', ':8ball: Without a doubt', ':8ball: Definitely', ':8ball: Very doubtful', ':8ball: Outlook not so good', ':8ball: My sources say no', ':8ball: My reply is no', ':8ball: Most likely', ':8ball: You may rely on it', ':8ball: Ask again later'])
+		await bot.send_message(message.channel,(random.choice(ball8)))
     
 def user_is_me(ctx):
 	return ctx.message.author.id == "277983178914922497"
