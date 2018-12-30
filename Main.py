@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
+import os
 
-bot = commands.Bot(command_prefix=("m."))
+bot = commands.Bot(command_prefix=("!p"))
 
 @bot.event
 async def on_member_join(member):
