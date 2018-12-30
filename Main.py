@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import inspect
+import random
 import os
 
 bot = commands.Bot(command_prefix=("!p"))
