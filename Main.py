@@ -18,7 +18,7 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
 
-@bot.event
+@client.event
 async def on_member_join(member):
     server = member.server
     embed = discord.Embed(title="👋 {} just joined {}".format(member.name, server.name), description="Welcome! to {} {}! Enjoy your stay here!".format(server.name, member.name), color=0x00ff00)
