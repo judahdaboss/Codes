@@ -7,7 +7,18 @@ import inspect
 import json
 import os
 
-client = commands.Bot(command_prefix=("!p"))
+client = commands.Bot(command_prefix=("b!"))
+client.remove_command("help")
+status = ["testing the bot", "b!help", "created by noobperson"]
+
+async def change_status():
+  await client.wait_until_ready()
+  msgs = cycle(status)
+  
+  while not client.is_closed:
+    current_status = next(msgs)
+    await client.change_presence(game=discord.Game(name=current_status))
+    await asyncio.sleep(5)
 
 @client.event
 async def on_ready():
@@ -15,27 +26,41 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
 
-@client.event
-async def on_member_join(member):
-    server = member.server
-    embed = discord.Embed(title="👋 {} just joined {}".format(member.name, server.name), description="Welcome! to {} {}! Enjoy your stay here!".format(server.name, member.name), color=0x00ff00)
-    embed.set_thumbnail(url=member.avatar_url)
-    try:
-        await client.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
-    except discord.errors.InvalidArgument:
-        await client.create_channel(server, "joins-and-leaves", type=discord.ChannelType.text)
-        await client.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
+players = {}
 
 @client.event
-async def on_member_remove(member):
-    server = member.server
-    embed = discord.Embed(title="👋 {} just left the server.".format(member.name), description="Goodbye! {} hope to see you again".format(member.name), color=0x00ff00)
-    embed.set_thumbnail(url=member.avatar_url)
-    try:
-        await client.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
-    except discord.errors.InvalidArgument:
-	await client.create_channel(server, "joins-and-leave", type=discord.ChannelType.text)
-	await client.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
+async def on_message(message):
+  if message.content == 'b!stop':
+      serverid = message.server.id
+      players[serverid].stop()
+  if message.content == 'b!pause':
+      serverid = message.server.id
+      players[serverid].pause()
+      await client.send_message(message.channel, "Player paused")
+  if message.content == 'b!resume':
+      serverid = message.server.id
+      players[serverid].resume()
+      await client.send_message(message.channel, "Player resumed")
+  if message.content.startswith('b!play '):
+      author = message.author
+      name = message.content.replace("b!play ", '')                 
+      fullcontent = ('http://www.youtube.com/results?search_query=' + name)
+      text = requests.get(fullcontent).text
+      soup = bs4.BeautifulSoup(text, 'html.parser')
+      img = soup.find_all('img')
+      div = [ d for d in soup.find_all('div') if d.has_attr('class') and 'yt-lockup-dismissable' in d['class']]
+      a = [ x for x in div[0].find_all('a') if x.has_attr('title') ]
+      title = (a[0]['title'])
+      a0 = [ x for x in div[0].find_all('a') if x.has_attr('title') ][0]
+      url = ('http://www.youtube.com'+a0['href'])
+      delmsg = await client.send_message(message.channel, 'Now Playing ** >> ' + title + '**')
+      server = message.server
+      voice_client = client.voice_client_in(server)
+      player = await voice_client.create_ytdl_player(url)
+      players[server.id] = player
+      print("User: {} From Server: {} is playing {}".format(author, server, title))
+      player.start()
+  await client.process_commands(message)
    
 @client.event
 async def on_message(message):
@@ -46,6 +71,17 @@ async def on_message(message):
     
 def user_is_me(ctx):
 	return ctx.message.author.id == "277983178914922497"
+
+@client.command(pass_context=True)
+async def help(ctx):
+	embed = discord.Embed(title="!p8ball", description="yes/no question", color=0xFFFFF)
+	embed.add_field(name="b!join", value="join voice channel first and then try b!join")
+	embed.add_field(name="b!leave", value="to make the bot leave voice channel")
+	embed.add_field(name="b!play", value="play music from the bot")
+	embed.add_field(name="b!stop", value="to stop the music")
+	embed.add_field(name="b!pause", value="to pause the music")
+	embed.add_field(name="b!resume", value="to resume the music")
+	await client.say(embed=embed)
     
 @client.command(name='eval', pass_context=True)
 @commands.check(user_is_me)
@@ -56,5 +92,19 @@ async def _eval(ctx, *, command):
     else:
     	await client.delete_message(ctx.message)
     	await client.say(res)
-        
+	
+@client.command(pass_context=True)
+async def join(ctx):
+    channel = ctx.message.author.voice.voice_channel
+    await client.join_voice_channel(channel)
+    await client.say('Connected to voice channel: **[' + str(channel) + ']**')
+	
+@client.command(pass_context=True)
+async def leave(ctx):
+    server = ctx.message.server
+    voice_client = client.voice_client_in(server)
+    await voice_client.disconnect()
+    await client.say('Left voice channel')
+	
+client.loop.create_task(change_status())
 client.run(os.environ['BOT_TOKEN'])
