@@ -65,12 +65,6 @@ async def on_message(message):
       player.start()
   await client.process_commands(message)
 
-@client.event
-async def on_message(message):
-	if message.content.upper().startswith('B!8BALL'):
-		ball8 = (['It is certain','As i see it, yes', 'Dont count on it', 'Without a doubt', 'Definitely', 'Very doubtful', 'Outlook not so good', 'My sources say no', 'My reply is no', 'Most likely', 'You may rely on it', 'Ask again later'])
-		await bot.send_message(message.channel,(random.choice(ball8)))
-
 @client.command(pass_context=True)
 async def help(ctx):
     embed = discord.Embed(title="b!8ball", description="yes/no question", color=0xFFFFF)
