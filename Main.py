@@ -1,11 +1,17 @@
 import discord
+from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
 import time
 import random
-import inspect
+from discord import Game
+from itertools import cycle
 import json
 import os
+import bs4, requests
+from time import gmtime, strftime
+from discord import opus
+import youtube_dl
 
 client = commands.Bot(command_prefix=("b!"))
 client.remove_command("help")
