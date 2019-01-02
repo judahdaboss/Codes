@@ -3,6 +3,12 @@ from discord.ext import commands
 import inspect
 import random
 import os
+import asyncio
+import json
+import os
+import bs4, requests
+from discord import opus
+import youtube_dl
 
 bot = commands.Bot(command_prefix=("!p"))
 
