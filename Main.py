@@ -1,18 +1,11 @@
 import discord
-from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
 import time
 import random
-from discord import Game
-from itertools import cycle
 import inspect
 import json
 import os
-import bs4, requests
-from time import gmtime, strftime
-from discord import opus
-import youtube_dl
 
 client = commands.Bot(command_prefix=("!p"))
 
@@ -41,43 +34,9 @@ async def on_member_remove(member):
     try:
         await client.send_message(discord.utils.get(server.channels, name = "joins-and-leaves"), embed=embed)
     except discord.errors.InvalidArgument:
-        await client.create_channel(server, "joins-and-leaves", type=discord.ChannelType.text)
-        await client.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
-	
-@client.event
-async def on_message(message):
-  if message.content == 'm.skip':
-      serverid = message.server.id
-      players[serverid].stop()
-  if message.content == 'm.pause':
-      serverid = message.server.id
-      players[serverid].pause()
-      await client.send_message(message.channel, "Player paused")
-  if message.content == 'm.resume':
-      serverid = message.server.id
-      players[serverid].resume()
-      await client.send_message(message.channel, "Player resumed")
-  if message.content.startswith('m.play '):
-      author = message.author
-      name = message.content.replace("m.play ", '')                 
-      fullcontent = ('http://www.youtube.com/results?search_query=' + name)
-      text = requests.get(fullcontent).text
-      soup = bs4.BeautifulSoup(text, 'html.parser')
-      img = soup.find_all('img')
-      div = [ d for d in soup.find_all('div') if d.has_attr('class') and 'yt-lockup-dismissable' in d['class']]
-      a = [ x for x in div[0].find_all('a') if x.has_attr('title') ]
-      title = (a[0]['title'])
-      a0 = [ x for x in div[0].find_all('a') if x.has_attr('title') ][0]
-      url = ('http://www.youtube.com'+a0['href'])
-      delmsg = await client.send_message(message.channel, 'Now Playing ** >> ' + title + '**')
-      server = message.server
-      voice_client = client.voice_client_in(server)
-      player = await voice_client.create_ytdl_player(url)
-      players[server.id] = player
-      print("User: {} From Server: {} is playing {}".format(author, server, title))
-      player.start()
-  await client.process_commands(message)
-	
+	await client.create_channel(server, "joins-and-leave", type=discord.ChannelType.text)
+	await client.send_message(discord.utils.get(server.channels, name="joins-and-leaves"), embed=embed)
+   
 @client.event
 async def on_message(message):
 	if message.content.upper().startswith('!P8BALL'):
@@ -97,18 +56,5 @@ async def _eval(ctx, *, command):
     else:
     	await client.delete_message(ctx.message)
     	await client.say(res)
-	
-@client.command(pass_context=True)
-async def join(ctx):
-    channel = ctx.message.author.voice.voice_channel
-    await client.join_voice_channel(channel)
-    await client.say('Connected to voice channel: **[' + str(channel) + ']**')
-	
-@client.command(pass_context=True)
-async def leave(ctx):
-    server = ctx.message.server
-    voice_client = client.voice_client_in(server)
-    await voice_client.disconnect()
-    await client.say('Left voice channel')
         
 client.run(os.environ['BOT_TOKEN'])
