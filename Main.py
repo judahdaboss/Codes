@@ -82,6 +82,15 @@ async def ping(ctx):
     pingms = await client.say("Pinging...")
     ping = (time.time() - pingtime) * 1000
     await client.edit_message(pingms, "Pong! :ping_pong: ping time is `%dms`" % ping)
+	
+@client.command(pass_context=True, no_pm=True)
+async def playing(ctx):
+    state = get_voice_state(ctx.message.server)
+    if state.current is None:
+        await client.say('Not playing anything.')
+    else:
+        skip_count = len(state.skip_votes)
+        await client.say('Now playing {}'.format(state.current))
     
 @client.command(pass_context=True)
 async def join(ctx):
