@@ -67,7 +67,7 @@ async def on_message(message):
 
 @client.command(pass_context=True)
 async def help(ctx):
-    embed = discord.Embed(title="b!8ball", description="yes/no question", color=0xFFFFF)
+    embed = discord.Embed(title="b!ping", description="get bot's response time", color=0xFFFFF)
     embed.add_field(name="b!join", value="join voice channel first and then try b!join")
     embed.add_field(name="b!leave", value="to make the bot leave voice channel")
     embed.add_field(name="b!play", value="play music from the bot")
