@@ -1,12 +1,16 @@
 import discord
+from discord.ext.commands import Bot
 from discord.ext import commands
-import inspect
-import random
-import os
 import asyncio
+import time
+import random
+from discord import Game
+from itertools import cycle
+import inspect
 import json
 import os
 import bs4, requests
+from time import gmtime, strftime
 from discord import opus
 import youtube_dl
 
