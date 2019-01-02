@@ -82,15 +82,5 @@ async def help(ctx):
 	embed.add_field(name="b!pause", value="to pause the music")
 	embed.add_field(name="b!resume", value="to resume the music")
 	await client.say(embed=embed)
-    
-@client.command(name='eval', pass_context=True)
-@commands.check(user_is_me)
-async def _eval(ctx, *, command):
-    res = eval(command)
-    if inspect.isawaitable(res):
-        await client.say(await res)
-    else:
-    	await client.delete_message(ctx.message)
-    	await client.say(res)
 
 client.run(os.environ['BOT_TOKEN'])
