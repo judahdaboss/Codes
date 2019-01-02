@@ -92,19 +92,5 @@ async def _eval(ctx, *, command):
     else:
     	await client.delete_message(ctx.message)
     	await client.say(res)
-	
-@client.command(pass_context=True)
-async def join(ctx):
-    channel = ctx.message.author.voice.voice_channel
-    await client.join_voice_channel(channel)
-    await client.say('Connected to voice channel: **[' + str(channel) + ']**')
-	
-@client.command(pass_context=True)
-async def leave(ctx):
-    server = ctx.message.server
-    voice_client = client.voice_client_in(server)
-    await voice_client.disconnect()
-    await client.say('Left voice channel')
-	
-client.loop.create_task(change_status())
+
 client.run(os.environ['BOT_TOKEN'])
