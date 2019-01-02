@@ -1,9 +1,11 @@
+
 import discord
 from discord.ext import commands
 import asyncio
 import requests, bs4
 from itertools import cycle
 import os
+import time
 import youtube_dl
 from discord import opus
 
@@ -12,22 +14,23 @@ client.remove_command("help")
 status = ["testing the bot", "b!help", "created by noobperson"]
 
 async def change_status():
-  await client.wait_until_ready()
-  msgs = cycle(status)
-  
-  while not client.is_closed:
-    current_status = next(msgs)
-    await client.change_presence(game=discord.Game(name=current_status))
-    await asyncio.sleep(5)
+	await client.wait_until_ready()
+	msgs = cycle(status)
+	
+	while not client.is_closed:
+		current_status = next(msgs)
+		await client.change_presence(game=discord.Game(name=current_status))
+		await asyncio.sleep(5)
 
-@client.event
+players = {}	
+
+@client.event 
 async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-
-players = {}
-
+	print('Logged in as')
+	print("User name:", client.user.name)
+	print("User id:", client.user.id)
+	print('---------------')
+	
 @client.event
 async def on_message(message):
   if message.content == 'b!stop':
@@ -61,26 +64,37 @@ async def on_message(message):
       print("User: {} From Server: {} is playing {}".format(author, server, title))
       player.start()
   await client.process_commands(message)
-   
-@client.event
-async def on_message(message):
-	if message.content.upper().startswith('!P8BALL'):
-		ball8 = ([':8ball: It is certain',':8ball: As i see it, yes', ':8ball: Dont count on it', ':8ball: Without a doubt', ':8ball: Definitely', ':8ball: Very doubtful', ':8ball: Outlook not so good', ':8ball: My sources say no', ':8ball: My reply is no', ':8ball: Most likely', ':8ball: You may rely on it', ':8ball: Ask again later'])
-		await client.send_message(message.channel,(random.choice(ball8)))
-	await client.process_commands(message)
-    
-def user_is_me(ctx):
-	return ctx.message.author.id == "277983178914922497"
 
 @client.command(pass_context=True)
 async def help(ctx):
-	embed = discord.Embed(title="!p8ball", description="yes/no question", color=0xFFFFF)
-	embed.add_field(name="b!join", value="join voice channel first and then try b!join")
-	embed.add_field(name="b!leave", value="to make the bot leave voice channel")
-	embed.add_field(name="b!play", value="play music from the bot")
-	embed.add_field(name="b!stop", value="to stop the music")
-	embed.add_field(name="b!pause", value="to pause the music")
-	embed.add_field(name="b!resume", value="to resume the music")
-	await client.say(embed=embed)
+    embed = discord.Embed(title="!p8ball", description="yes/no question", color=0xFFFFF)
+    embed.add_field(name="b!join", value="join voice channel first and then try b!join")
+    embed.add_field(name="b!leave", value="to make the bot leave voice channel")
+    embed.add_field(name="b!play", value="play music from the bot")
+    embed.add_field(name="b!stop", value="to stop the music")
+    embed.add_field(name="b!pause", value="to pause the music")
+    embed.add_field(name="b!resume", value="to resume the music")
+    await client.say(embed=embed)
 
+@client.command(pass_context=True)
+async def ping(ctx):
+    pingtime = time.time()
+    pingms = await client.say("Pinging...")
+    ping = (time.time() - pingtime) * 1000
+    await client.edit_message(pingms, "Pong! :ping_pong: ping time is `%dms`" % ping)
+    
+@client.command(pass_context=True)
+async def join(ctx):
+    channel = ctx.message.author.voice.voice_channel
+    await client.join_voice_channel(channel)
+    await client.say('Connected to voice channel: **[' + str(channel) + ']**')
+	
+@client.command(pass_context=True)
+async def leave(ctx):
+    server = ctx.message.server
+    voice_client = client.voice_client_in(server)
+    await voice_client.disconnect()
+    await client.say('Left voice channel')
+	
+client.loop.create_task(change_status())
 client.run(os.environ['BOT_TOKEN'])
