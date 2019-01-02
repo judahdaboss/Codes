@@ -102,8 +102,8 @@ async def join(ctx):
 async def leave(ctx):
     server = ctx.message.server
     voice_client = client.voice_client_in(server)
-    await voice_client.disconnect()
-    await client.say('Left voice channel')
+    await voice_client.disconnect(channel)
+    await client.say('I have disconnected from voice channel **[' + str(channel) + ']**')
 	
 client.loop.create_task(change_status())
 client.run(os.environ['BOT_TOKEN'])
