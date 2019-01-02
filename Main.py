@@ -4,7 +4,6 @@ import asyncio
 import requests, bs4
 from itertools import cycle
 import os
-import time
 import youtube_dl
 from discord import opus
 
