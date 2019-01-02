@@ -67,13 +67,13 @@ async def on_message(message):
 
 @client.event
 async def on_message(message):
-	if message.content.upper().startswith('D!8BALL'):
+	if message.content.upper().startswith('B!8BALL'):
 		ball8 = (['It is certain','As i see it, yes', 'Dont count on it', 'Without a doubt', 'Definitely', 'Very doubtful', 'Outlook not so good', 'My sources say no', 'My reply is no', 'Most likely', 'You may rely on it', 'Ask again later'])
 		await bot.send_message(message.channel,(random.choice(ball8)))
 
 @client.command(pass_context=True)
 async def help(ctx):
-    embed = discord.Embed(title="!p8ball", description="yes/no question", color=0xFFFFF)
+    embed = discord.Embed(title="b!8ball", description="yes/no question", color=0xFFFFF)
     embed.add_field(name="b!join", value="join voice channel first and then try b!join")
     embed.add_field(name="b!leave", value="to make the bot leave voice channel")
     embed.add_field(name="b!play", value="play music from the bot")
