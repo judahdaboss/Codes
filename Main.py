@@ -100,6 +100,7 @@ async def join(ctx):
 	
 @client.command(pass_context=True)
 async def leave(ctx):
+    channel = ctx.message.author.voice.voice_channel
     server = ctx.message.server
     voice_client = client.voice_client_in(server)
     await voice_client.disconnect(channel)
